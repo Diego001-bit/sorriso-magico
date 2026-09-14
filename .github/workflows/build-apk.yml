@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   build:
@@ -13,10 +13,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build React App
         run: npm run build
@@ -29,6 +29,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x android/gradlew
 
       - name: Build APK
         run: |
