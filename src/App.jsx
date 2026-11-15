@@ -261,6 +261,7 @@ export default function SorrisoMagicoBooking() {
   const [adminError, setAdminError] = useState(false);
   const [adminLoading, setAdminLoading] = useState(false);
   const [blockDayInput, setBlockDayInput] = useState('');
+  const [adminSearch, setAdminSearch] = useState('');
 
   // CARREGAR DADOS COM VERIFICAÇÃO RIGOROSA DE ERROS
   const loadData = useCallback(async () => {
@@ -478,6 +479,27 @@ export default function SorrisoMagicoBooking() {
     });
     return rows;
   }, [bookings]);
+
+  const filteredAdminRows = useMemo(() => {
+    const query = adminSearch.trim().toLowerCase();
+    if (!query) return adminRows;
+
+    return adminRows.filter((r) => {
+      const code = makeBookingCode(r.childName, r.date, r.time).toLowerCase();
+      const patient = String(r.childName || '').toLowerCase();
+      const parent = String(r.parentName || '').toLowerCase();
+      const phone = String(r.phone || '').toLowerCase();
+      const dateLabel = fmtLabel(r.date).toLowerCase();
+
+      return (
+        code.includes(query) ||
+        patient.includes(query) ||
+        parent.includes(query) ||
+        phone.includes(query) ||
+        dateLabel.includes(query)
+      );
+    });
+  }, [adminRows, adminSearch]);
 
   return (
     <>
@@ -728,10 +750,31 @@ export default function SorrisoMagicoBooking() {
             <div>
               <span className="admin-tag">Painel de Controle</span>
               <h2>Gestão de Agendamentos</h2>
+
+              {/* BARRA DE PESQUISA */}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '14px' }}>
+                <input
+                  type="text"
+                  placeholder="Pesquisar por código, paciente, responsável, telefone ou data..."
+                  value={adminSearch}
+                  onChange={(e) => setAdminSearch(e.target.value)}
+                />
+                {adminSearch && (
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setAdminSearch('')}
+                  >
+                    Limpar
+                  </button>
+                )}
+              </div>
               
               <div>
                 {adminRows.length === 0 ? (
                   <p className="empty-note">Nenhum agendamento registrado até o momento.</p>
+                ) : filteredAdminRows.length === 0 ? (
+                  <p className="empty-note">Nenhum agendamento encontrado para "{adminSearch}".</p>
                 ) : (
                   <table>
                     <thead>
@@ -746,7 +789,7 @@ export default function SorrisoMagicoBooking() {
                       </tr>
                     </thead>
                     <tbody>
-                      {adminRows.map((r) => (
+                      {filteredAdminRows.map((r) => (
                         <tr key={`${r.date}-${r.idx}`}>
                           <td style={{ fontWeight: 700, color: 'var(--primary)' }}>{makeBookingCode(r.childName, r.date, r.time)}</td>
                           <td>{fmtLabel(r.date)}</td>
@@ -787,6 +830,7 @@ export default function SorrisoMagicoBooking() {
                   setIsAdminOpen(false);
                   setIsAdminAuthenticated(false);
                   setAdminPass('');
+                  setAdminSearch('');
                 }}>Fechar Painel</button>
               </div>
             </div>
