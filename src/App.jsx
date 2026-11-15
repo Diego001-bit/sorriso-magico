@@ -482,7 +482,8 @@ export default function SorrisoMagicoBooking() {
 
   const filteredAdminRows = useMemo(() => {
     const query = adminSearch.trim().toLowerCase();
-    if (!query) return adminRows;
+    // Só puxa resultados se houver algo digitado na pesquisa
+    if (!query) return [];
 
     return adminRows.filter((r) => {
       const code = makeBookingCode(r.childName, r.date, r.time).toLowerCase();
@@ -755,7 +756,7 @@ export default function SorrisoMagicoBooking() {
               <div style={{ display: 'flex', gap: '8px', marginTop: '14px' }}>
                 <input
                   type="text"
-                  placeholder="Pesquisar por código, paciente, responsável, telefone ou data..."
+                  placeholder="Digite o código, paciente, responsável, telefone ou data para buscar..."
                   value={adminSearch}
                   onChange={(e) => setAdminSearch(e.target.value)}
                 />
@@ -771,8 +772,8 @@ export default function SorrisoMagicoBooking() {
               </div>
               
               <div>
-                {adminRows.length === 0 ? (
-                  <p className="empty-note">Nenhum agendamento registrado até o momento.</p>
+                {!adminSearch.trim() ? (
+                  <p className="empty-note">Digite acima para pesquisar agendamentos na base de dados.</p>
                 ) : filteredAdminRows.length === 0 ? (
                   <p className="empty-note">Nenhum agendamento encontrado para "{adminSearch}".</p>
                 ) : (
