@@ -3,16 +3,19 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/sorriso-magico/',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Meu Aplicativo React',
-        short_name: 'MeuApp',
-        description: 'Aplicação React convertida para PWA',
-        theme_color: '#ffffff',
+        name: 'Sorriso Mágico',
+        short_name: 'Sorriso Mágico',
+        description: 'Agendamento odontológico Sorriso Mágico',
+        theme_color: '#1E40AF',
+        start_url: '/sorriso-magico/',
+        scope: '/sorriso-magico/',
         icons: [
           {
             src: 'pwa-192x192.png',
