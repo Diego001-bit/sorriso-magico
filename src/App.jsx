@@ -840,4 +840,5 @@ export default function SorrisoMagicoBooking() {
       </div>
     </>
   );
+  
 }
